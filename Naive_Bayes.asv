@@ -1,0 +1,68 @@
+function feature=Naive_Bayes(train_data,test_data,m)
+%data=dlmread('breast-cancer-assignment5.txt');%不足的会自动补0
+data_type=train_data(1,1:end-1);
+discrete_num=find(data_type==1);
+numerical_num=find(data_type==0);
+
+x=train_data(2:end,1:end-1);
+x_label=train_data(2:end,end);   %第一个数据集标签是0和1，第二个是-1和1，下面都用-1和1处理
+x_label(x_label==-1)=0;
+
+
+p_label=sum(x_label==1);
+n_label=sum(x_label==0);
+feature={};
+
+for j=1:length(discrete_num)
+    index=discrete_num(j);
+    column_x=x(:,index);
+    feature{index}.value=unique(column_x);
+    value_length=length( feature{index}.value);
+    feature{index}.probability_p=zeros(value_length,1);
+    feature{index}.probability_n=zeros(value_length,1);
+    for k=1:value_length
+        flag=feature{index}.value(k);
+        flag_1=column_x - flag;
+        flag_1(x_label==0)=1;   
+        feature{index}.probability_p(k)=(sum(flag_1==0)+m)/(p_label+value_length*m);
+        
+        flag_0=column_x - flag;
+        flag_0(x_label==1)=1;   
+        feature{index}.probability_n(k)=(sum(flag_0==0)+m)/(n_label+value_length*m);
+    end
+end
+
+for j=1:length(numerical_num)
+    index=numerical_num(j);
+    column_x=x(:,index);
+    feature{j}.mean=mean(column_x);
+    feature{j}.var=var(column_x);
+end
+    
+%假定测试数据只有特征
+test_num=size(test_data,1);
+test_label=zeros(test_num,1);
+test_p=ones(test_num,1);
+test_n=ones(test_num,1);
+for k=1:test_num
+    test_flag=test_data(k,:);    %取出第k个测试例
+    
+    for j=1:length(discrete_num)  %离散属性
+        index=discrete_num(j);
+        test_p(k)= test_p(k)*feature{index}.probability_p(feature{index}.value==test_flag(index));
+        test_n(k)= test_n(k)*feature{index}.probability_n(feature{index}.value==test_flag(index));
+    end
+    
+    for j=1:length(numerical_num)
+        index=discrete_num(j);
+         test_p(k)= test_p(k)*normpdf(,0,1)
+    
+    
+    
+    
+    
+end
+
+
+
+
