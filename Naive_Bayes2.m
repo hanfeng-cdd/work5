@@ -64,10 +64,11 @@ for k=1:test_num
     test_flag=test_data(k,:);    %取出第k个测试例
     
     for j=1:length(discrete_num)  %离散属性,防止数据溢出，用log连加,但不能反复取
-        index=discrete_num(j);
-        test_p(k)= test_p(k)+log(feature{index}.probability_p(feature{index}.value==test_flag(index)));
-        test_n(k)= test_n(k)+log(feature{index}.probability_n(feature{index}.value==test_flag(index)));
+            index=discrete_num(j);
+            test_p(k)= test_p(k)+log(feature{index}.probability_p(feature{index}.value==test_flag(index)));
+            test_n(k)= test_n(k)+log(feature{index}.probability_n(feature{index}.value==test_flag(index)));
     end
+    
     
     for j=1:length(numerical_num)
         index=numerical_num(j);

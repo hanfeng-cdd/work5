@@ -12,9 +12,13 @@ for k=1:test_num
     
     for j=1:length(discrete_num)  %离散属性,防止数据溢出，用log连加,但不能反复取
         index=discrete_num(j);
-       % h.feature{index}.probability_p(h.feature{index}.value==test_flag(index))         %出现了新的特征
-        test_p(k)= test_p(k)+log(h.feature{index}.probability_p(h.feature{index}.value==test_flag(index)));
-        test_n(k)= test_n(k)+log(h.feature{index}.probability_n(h.feature{index}.value==test_flag(index)));
+       if sum(h.feature{index}.value==test_flag(index))     %没有出现新特征
+            test_p(k)= test_p(k)+log(h.feature{index}.probability_p(h.feature{index}.value==test_flag(index)));
+            test_n(k)= test_n(k)+log(h.feature{index}.probability_n(h.feature{index}.value==test_flag(index)));
+        else
+            test_p(k)= test_p(k);             %既然训练样本从来没有出现过，那我就可以不用管你！！！！
+            test_n(k)= test_n(k);
+        end
     end
     
     for j=1:length(numerical_num)

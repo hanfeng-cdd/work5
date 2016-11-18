@@ -1,7 +1,7 @@
 function test_label=adboost_Weight(data_type,train_data,test_data,T,m)
 
 [train_num,feature_num]=size(train_data);
-feature_num=feature_num-1;     %去掉标签
+%feature_num=feature_num-1;     %去掉标签
 [test_num,~]=size(test_data);
 test_label=zeros(test_num,1);
 D=ones(train_num,1)/train_num;    %初始化分布
@@ -14,7 +14,7 @@ if sum(train_ture_label==0)
     label_flag=0;
 end
 train_data(:,end)=train_ture_label;
-
+train_label=train_data(:,end);
 
 
 w=zeros(T,1);
@@ -22,6 +22,7 @@ h={};
 %sz = [train_num,1]; % 输出随机矩阵的size
  train_data_D=train_data;
 for t=1:T
+    t
     %%训练模型得到错误率
     [NaiveBayes_label,h{t}]=Naive_Bayes_Weight(data_type,train_data_D,train_data_D(:,1:end-1),m,D);
     train_label_D=train_data_D(:,end);
@@ -33,8 +34,9 @@ for t=1:T
     %计算权值
     w(t)=0.5*log((1-ErrorRate)/ErrorRate);
     %改变数据分布
-    D(NaiveBayes_label==train_label_D)=D(NaiveBayes_label==train_label_D)*exp(-w(t));
-    D(NaiveBayes_label~=train_label_D)=D(NaiveBayes_label~=train_label_D)*exp(w(t));
+    label_t=BaseClassifier(data_type,h{t},train_data(:,1:end-1));
+    D(label_t==train_label)=D(label_t==train_label)*exp(-w(t));
+    D(label_t~=train_label)=D(label_t~=train_label)*exp(w(t));
     D=D/sum(D);   
 %    r = discretize(rand(sz),[0 cumsum(D)']);
 %    train_data_D=train_data(r,:);
@@ -42,7 +44,7 @@ end
 %合并基分类器进行预测
 if t~=T
     T=t-1;%到底训练出来了多少个分类器,h{t}被丢掉了；
-%T=t;   
+%T=t; 
 end
 f=zeros(test_num,T);
 for t=1:T
