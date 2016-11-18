@@ -26,7 +26,7 @@ for t=1:T
     [NaiveBayes_label,h{t}]=Naive_Bayes_Weight(data_type,train_data_D,train_data_D(:,1:end-1),m,D);
     train_label_D=train_data_D(:,end);
     train_label_D(train_label_D==0)=-1;   %把原来为0的转化成-1；
-    ErrorRate=sum(NaiveBayes_label~=train_label_D)/size(train_data_D,1);
+    ErrorRate=sum(D(NaiveBayes_label~=train_label_D));   %基于现在的分布计算准确率
     if ErrorRate>0.5     %出现基分类器错误率大于0.5，则重新采样
         break;
     end

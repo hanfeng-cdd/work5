@@ -6,7 +6,7 @@ data_type=german_data(1,1:end-1);
 train_data=german_data(2:end,1:end);
 test_data=german_data(2:end,1:end-1);
 m=0.1;     %拉普拉斯平滑参数
-T=10;
+T=8;
 test_label=adboost_Weight(data_type,train_data,test_data,T,m);
 ture_label=german_data(2:end,end);
 sum(test_label==ture_label)
