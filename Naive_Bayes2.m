@@ -5,14 +5,14 @@ discrete_num=find(data_type==1);
 numerical_num=find(data_type==0);
 
 x=train_data(:,1:end-1);
-[train_num,feature_num]=size(x);
+[train_num,~]=size(x);
 
-x_label=train_data(:,end);   %第一个数据集标签是0和1，第二个是-1和1，下面都用-1和1处理
-%label_flag=-1;
-if sum(x_label==0)
-    x_label(x_label==0)=-1;
-%    label_flag=0;
-end
+ x_label=train_data(:,end);   %第一个数据集标签是0和1，第二个是-1和1，下面都用-1和1处理
+% %label_flag=-1;
+% if sum(x_label==0)
+%     x_label(x_label==0)=-1;
+% %    label_flag=0;
+% end
 
 
 p_label=sum(x_label==1);

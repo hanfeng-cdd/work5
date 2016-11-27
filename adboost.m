@@ -1,6 +1,6 @@
-function test_label=adboost(data_type,train_data,test_data,T,m)
+function acc=adboost(data_type,train_data,test_data,T,m)
 
-[train_num,feature_num]=size(train_data);
+[train_num,~]=size(train_data);
 %feature_num=feature_num-1;     %去掉标签
 [test_num,~]=size(test_data);
 test_label=zeros(test_num,1);
@@ -9,26 +9,27 @@ D=ones(train_num,1)/train_num;    %初始化分布
 train_label=train_data(:,end);
 w=zeros(T,1);
 h={};
-sz = [train_num,1]; % 输出随机矩阵的size
+%sz = [train_num,1]; % 输出随机矩阵的size
  train_data_D=train_data;
+ index=1:train_num;
 for t=1:T
   
  
-   t
+%   t
     %%训练模型得到错误率
     [NaiveBayes_label,h{t}]=Naive_Bayes2(data_type,train_data_D,train_data_D(:,1:end-1),m);
     train_label_D=train_data_D(:,end);
-    train_label_D(train_label_D==0)=-1;   %把原来为0的转化成-1；
+%    train_label_D(train_label_D==0)=-1;   %把原来为0的转化成-1；
     ErrorRate=sum(NaiveBayes_label~=train_label_D)/size(train_data_D,1);
     while ErrorRate>0.5     %出现基分类器错误率大于0.5，则重新采样
         %break;
-        disp('cai yang');
-        t
-         r = discretize(rand(sz),[0 cumsum(D)']);
+%        disp('cai yang');
+%        t
+          [~,r] = bootstrp(1,[],index,'Weight',D); 
          train_data_D=train_data(r,:);
           [NaiveBayes_label,h{t}]=Naive_Bayes2(data_type,train_data_D,train_data_D(:,1:end-1),m);
          train_label_D=train_data_D(:,end);
-         train_label_D(train_label_D==0)=-1;   %把原来为0的转化成-1；
+%         train_label_D(train_label_D==0)=-1;   %把原来为0的转化成-1；
          ErrorRate=sum(NaiveBayes_label~=train_label_D)/size(train_data_D,1);   
     end
     %计算权值
@@ -38,7 +39,8 @@ for t=1:T
     D(label_t==train_label)=D(label_t==train_label)*exp(-w(t));
     D(label_t~=train_label)=D(label_t~=train_label)*exp(w(t));
     D=D/sum(D);   
-    r = discretize(rand(sz),[0 cumsum(D)']);     %重采样D：
+%    r = discretize(rand(sz),[0 cumsum(D)']);     %重采样D：
+    [~,r] = bootstrp(1,[],index,'Weight',D); 
     train_data_D=train_data(r,:);
 end
 %合并基分类器进行预测
@@ -53,5 +55,10 @@ end
 test_label=sum(f,2);
 test_label(test_label>=0)=1;
 test_label(test_label<0)=-1;
+
+acc=sum(test_label==test_data(:,end))/test_num;
+
+
+
 
 
